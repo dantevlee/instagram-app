@@ -3,7 +3,7 @@ const app = express()
 const axios = require('axios');
 const port = process.env.PORT || 3000;
 const cors = require('cors');
-const token = process.env.BEARER_TOKEN;
+const token = process.env.ACCESS_TOKEN;
 require('dotenv').config();
 app.use(cors());
 
