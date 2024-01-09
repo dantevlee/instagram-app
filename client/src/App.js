@@ -84,6 +84,7 @@ function App() {
                 onClick={() => handleFilter("IMAGE")}
                 active={filter === "IMAGE"}
                 className="mx-3"
+                variant="dark"
               >
                 Images
               </Button>
@@ -91,6 +92,7 @@ function App() {
                 onClick={() => handleFilter("CAROUSEL_ALBUM")}
                 active={filter === "CAROUSEL_ALBUM"}
                 className="mx-3"
+                variant="dark"
               >
                 Carousels
               </Button>
@@ -98,6 +100,7 @@ function App() {
                 onClick={() => handleFilter("VIDEO")}
                 active={filter === "VIDEO"}
                 className="mx-3"
+                variant="dark"
               >
                 Videos
               </Button>
