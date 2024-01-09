@@ -1,3 +1,20 @@
-body{
+body {
   background-color: #8b9dc3;
 }
+
+h1{
+  text-align: center;
+}
+
+.btn-group {
+  margin-top: 10px;
+  color: black;
+}
+
+h5 {
+  margin-top: 20px; 
+  margin-left: 400px;
+}
+
+
+

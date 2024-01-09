@@ -1,21 +1,27 @@
-import React from 'react';
-import { Carousel, Card } from 'react-bootstrap';
+import { Carousel, Card, Image } from "react-bootstrap";
+import pic from '../assets/profilepic.JPG'; 
 
-const CarouselCard = ({ post, caption }) => {
-  const carouselItems = post.map((p, index) => (
-    <Carousel.Item key={index}>
-      <img className="d-block w-100" src={p.media_url} />
-    </Carousel.Item>
-  ));
-
+const CarouselCard = ({ post, caption, username }) => {
   return (
-    <Card style={{ marginBottom: '20px' }}>
+    <Card style={{ width: "300px" }}>
+      <Card.Header>
+        <Image
+          src={pic}
+          roundedCircle
+          style={{ width: "50px", height: "50px", marginRight: "10px" }}
+        />
+        <span>{username}</span>
+      </Card.Header>
       <Carousel>
-        {carouselItems}
+        {post.map((imageSrc, index) => (
+          <Carousel.Item key={index}>
+            <img className="d-block w-100" src={imageSrc} />
+            <Card.Body>
+              <Card.Text>{caption}</Card.Text>
+            </Card.Body>
+          </Carousel.Item>
+        ))}
       </Carousel>
-      <Card.Body>
-        <Card.Text>{caption}</Card.Text>
-      </Card.Body>
     </Card>
   );
 };

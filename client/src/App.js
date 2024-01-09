@@ -4,7 +4,8 @@ import { Container, Row, Col, ButtonGroup, Button } from "react-bootstrap";
 import ImageCard from "./components/ImageCard";
 import VideoCard from "./components/VideoCard";
 import CarouselCard from "./components/CarouselCard";
-import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "./App.css";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -20,22 +21,48 @@ function App() {
     } catch (error) {
       console.error("Error fetching posts: ", error);
     }
-
   }, []);
 
-  useEffect(() => {
+  const fetchCarouselData = async () => {
+    let carouselArray = [];
+    let promises = [];
+
     posts.forEach((p) => {
-      if (p.media_type === 'CAROUSEL_ALBUM') {
-        try {
-          axios.get(`https://ig-rest.onrender.com/api/carousel/posts?id=${p.id}`).then((res) => {
-            setCarouselPosts(res.data.data)
-          })
-        } catch(error){
-          console.error("Error fecthing carousel posts: ", error)
-        }
+      if (p.media_type === "CAROUSEL_ALBUM") {
+        const promise = axios.get(
+          `https://ig-rest.onrender.com/api/carousel/posts?id=${p.id}`
+        );
+
+        promises.push(promise);
+
+        promise.then((response) => {
+          carouselArray.push(response.data.data);
+
+          if (carouselArray.length === promises.length) {
+            let mediaArray = [];
+            for (const c of carouselArray) {
+              for (const m of c) {
+                mediaArray.push(m.media_url);
+              }
+            }
+            setCarouselPosts(mediaArray);
+          }
+        }).catch((error) => {
+          console.error("Error fetching carousel posts: ", error);
+        });
       }
-    })
-  }, [posts])
+    });
+
+    try {
+      await Promise.all(promises);
+    } catch (error) {
+      console.error("Error fetching carousel posts in promise all: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCarouselData();
+  }, [posts]);
 
   const handleFilter = (mediaType) => {
     const filtered = posts.filter((post) => post.media_type === mediaType);
@@ -45,37 +72,45 @@ function App() {
 
   return (
     <Fragment>
-      <h3>Instagram Profile Showcase</h3>
-      <h5>Filter Profile Content:</h5>
+      <h1>Instagram Profile Showcase</h1>
       <Container>
-        <ButtonGroup>
-          <Button
-            onClick={() => handleFilter("IMAGE")}
-            active={filter === "IMAGE"}
-            className="mx-2"
-          >
-            Images
-          </Button>
-          <Button
-            onClick={() => handleFilter("CAROUSEL_ALBUM")}
-            active={filter === "CAROUSEL_ALBUM"}
-            className="mx-2"
-          >
-            Carousels
-          </Button>
-          <Button
-            onClick={() => handleFilter("VIDEO")}
-            active={filter === "VIDEO"}
-            className="mx-2"
-          >
-            Videos
-          </Button>
-        </ButtonGroup>
+        <Row className="mb-4">
+          <Col md={6}>
+            <h5>Filter Profile Content:</h5>
+          </Col>
+          <Col md={6}>
+            <ButtonGroup className="btn-group">
+              <Button
+                onClick={() => handleFilter("IMAGE")}
+                active={filter === "IMAGE"}
+                className="mx-3"
+              >
+                Images
+              </Button>
+              <Button
+                onClick={() => handleFilter("CAROUSEL_ALBUM")}
+                active={filter === "CAROUSEL_ALBUM"}
+                className="mx-3"
+              >
+                Carousels
+              </Button>
+              <Button
+                onClick={() => handleFilter("VIDEO")}
+                active={filter === "VIDEO"}
+                className="mx-3"
+              >
+                Videos
+              </Button>
+            </ButtonGroup>
+          </Col>
+        </Row>
         <Row>
           {filteredPosts.map((post) => (
-            <Col key={post.id} md={4}>
+            <Col key={post.id} md={3}>
               {post.media_type === "IMAGE" && <ImageCard post={post} />}
-              {post.media_type === "CAROUSEL_ALBUM" && <CarouselCard post={carouselPosts} caption={post.caption} />}
+              {post.media_type === "CAROUSEL_ALBUM" && (
+                <CarouselCard post={carouselPosts} caption={post.caption} username={post.username} />
+              )}
               {post.media_type === "VIDEO" && <VideoCard post={post} />}
             </Col>
           ))}
@@ -84,4 +119,5 @@ function App() {
     </Fragment>
   );
 }
+
 export default App;
