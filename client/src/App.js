@@ -10,7 +10,7 @@ function App() {
 
     const tokenRefreshInterval = setInterval(() => {
       fetchToken();
-    }, 72000);
+    }, 5000000 * 1000);
 
     return () => clearInterval(tokenRefreshInterval);
   }, []);
