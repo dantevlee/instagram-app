@@ -1,6 +1,5 @@
-import React, { Fragment, useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import axios from "axios";
-import React, { Fragment } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Main from "./components/Main";
