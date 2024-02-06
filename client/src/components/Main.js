@@ -73,6 +73,7 @@ const Main = () => {
     const filtered = posts.filter((post) => post.media_type === mediaType);
     setFilteredPosts(filtered);
     setFilter(mediaType);
+    setIsInitialLoad(false);
     if(visitCount > 0){
       setVisitCount(0)
     }
