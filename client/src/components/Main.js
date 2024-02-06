@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Row, Col, ButtonGroup, Button } from "react-bootstrap";
+import { Container, Row, Col, ButtonGroup, Button, Alert } from "react-bootstrap";
 import ImageCard from './ImageCard';
 import CarouselCard from './CarouselCard';
 import VideoCard from './VideoCard';
@@ -10,6 +10,8 @@ const Main = () => {
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [filter, setFilter] = useState("");
   const [carouselPosts, setCarouselPosts] = useState([]);
+  const [visitCount, setVisitCount] = useState(1)
+  const [isInitialLoad, setIsInitialLoad] = useState(false);
 
   useEffect(() => {
     try {
@@ -19,7 +21,7 @@ const Main = () => {
     } catch (error) {
       console.error("Error fetching posts: ", error);
     }
-  }, []);
+  }, [isInitialLoad, visitCount]);
 
   const fetchCarouselData = async () => {
     let carouselArray = [];
@@ -61,17 +63,33 @@ const Main = () => {
   };
 
   useEffect(() => {
-    fetchCarouselData();
+      fetchCarouselData();
   }, [posts]);
 
   const handleFilter = (mediaType) => {
+    if (visitCount === 1){
+      setIsInitialLoad(true)
+    }
     const filtered = posts.filter((post) => post.media_type === mediaType);
     setFilteredPosts(filtered);
     setFilter(mediaType);
+    if(visitCount > 0){
+      setVisitCount(0)
+    }
   };
+
+  const removeNotification = () => {
+    setIsInitialLoad(false);
+    setVisitCount(0)
+  }
 
   return (
     <Fragment>
+       {isInitialLoad && (
+        <Alert variant="info" onClose={() => removeNotification()} dismissible>
+          This server is running on a free instance in the cloud that spins down if unused. It may take a few seconds for the first app initialization. Thank you for your patience!
+        </Alert>
+      )}
       <h1>Instagram Profile Showcase</h1>
       <Container>
         <Row className="mb-4">
@@ -81,7 +99,9 @@ const Main = () => {
           <Col md={6}>
             <ButtonGroup className="btn-group">
               <Button
-                onClick={() => handleFilter("IMAGE")}
+                onClick={
+                  () => handleFilter("IMAGE")
+                }
                 active={filter === "IMAGE"}
                 className="mx-3"
                 variant="dark"
